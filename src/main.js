@@ -1,8 +1,36 @@
 import Vue from 'vue'
 import App from './App.vue'
+import router from './router'
+import Cloudinary from "cloudinary-vue";
+import store from '@/store/index'
+import { domain, clientId } from "@/auth_config.json";  
+import { Auth0Plugin } from './auth';
 
+
+Vue.use(Cloudinary, {
+  configuration: { 
+   cloudName: "moerayo",
+   secure: true 
+  }
+ });
+
+ Vue.use(Auth0Plugin, {
+  domain,
+  clientId,
+  onRedirectCallback: appState => {
+    router.push(
+      appState && appState.targetUrl
+        ? appState.targetUrl
+        : window.location.pathname
+    );
+  }
+});
 Vue.config.productionTip = false
 
+
+
 new Vue({
-  render: h => h(App),
+  router,
+  store,
+  render: h => h(App)
 }).$mount('#app')
